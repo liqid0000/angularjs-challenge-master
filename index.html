@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html ng-app="AngularApp">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>AngularJS</title>
+  </head>
+
+  <body ng-controller="MainCtrl">
+
+  <div class="bs-docs-section" ng-controller="TypeaheadDemoCtrl">
+    <div class="center-block">
+      <form class="form" name="form "> 
+
+        <div class="row">
+          <div class="col-sm-6">
+            <label>Country</label>
+            <input type="text" class="form-control" ng-model="formModel.countryCode" bs-options="country for country in getCountryList()" placeholder="Country" bs-typeahead>
+          </div>
+        </div> 
+          <div app-directive ng-model="formModel" lat="latitude" lon="longitude">
+            <div class="row">
+              <div class="col-sm-6">
+                <label>Latitude</label>
+                <input type="number" class="form-control" min="-90" max="90" name="latitude" ng-model="formModel.latitude" required />   
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-sm-6">
+                <label>Longitude</label>
+                <input type="number" class="form-control" min="-180" max="180" name="longitude" ng-model="formModel.longitude" required />
+              </div>
+            </div>
+
+            <div class="row">
+              <button class="btn btn-success col-sm-6" data-ng-disabled="!form.latitude.$valid || !form.longitude.$valid" ng-click="addDestination()"  type="submit">+ Add destination</button>          
+            </div>           
+            
+            <div class="row"> 
+             
+                <span class="alert alert-warning" role="alert" data-ng-show="form.latitude.$error.required && !newActivityForm.latitude.$error.number" tooltip-placement="top">Duration latitude field is required</span>
+                <span class="alert alert-warning" role="alert" data-ng-show="form.$error.appDirective" tooltip-placement="top" >Duration latitude field must be a number</span>
+                <span class="alert alert-warning" role="alert" data-ng-show="form.latitude.$error.max" tooltip-placement="top" >Duration latitude field must be less than or equal to 90</span>
+                <span class="alert alert-warning" role="alert" data-ng-show="form.latitude.$error.min" tooltip-placement="top" >Duration hours field must be greater than or equal to -90</span>              
+                <span class="alert alert-warning" role="alert" data-ng-show="form.$error.appDirective" tooltip-placement="top" >Duration longitude field must be a number</span>
+                <span class="alert alert-warning" role="alert" data-ng-show="form.longitude.$error.max" tooltip-placement="top" >Duration longitude field must be less than or equal to 180</span>
+                <span class="alert alert-warning" role="alert" data-ng-show="form.longitude.$error.min" tooltip-placement="top" >Duration longitude field must be greater than or equal to -180</span>              
+              
+            </div>
+           
+          </div>        
+            
+      </form>            
+       
+      <button class="btn btn-danger" ng-click="removeDestination()">Remove</button>
+     
+      <div class="container">
+    
+        <table class="table table-striped">         
+           <thead>
+             <tr>
+               <th>#</th>
+               <th>Country Code</th>
+               <th>Latitude</th>
+               <th>Longitude</th>
+               <th>Checkbox</th>
+               <th>Edit</th>
+             </tr>
+           </thead>
+           <tbody ng-repeat='destination in destinations' >
+             <tr>
+               <th scope="row">1</th>
+               <td>{{destination.countryCode}}</td>
+               <td>{{destination.latitude}}</td>
+               <td>{{destination.longitude}}</td>
+               <td><input type="checkbox" ng-model="destination.done" /></td>
+               <td> <button class="btn btn-primary" ng-click="showModal(destination)">Show Modal!</button> </td>
+             </tr>          
+           </tbody>
+         </table>
+       
+     </div>
+    </div>  
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontawesome/4.5.0/css/font-awesome.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://mgcrea.github.io/angular-strap/styles/libs.min.css">
+    <link rel="stylesheet" href="https://mgcrea.github.io/angular-strap/styles/docs.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="./vendor/angular.js"></script>
+
+    <script src="https://code.angularjs.org/1.7.9/angular-animate.js"></script>
+    <script src="https://code.angularjs.org/1.7.9/angular-sanitize.min.js"></script>
+    <script src="https://mgcrea.github.io/angular-strap/dist/angular-strap.js" data-semver="v2.3.8"></script>
+    <script src="https://mgcrea.github.io/angular-strap/dist/angular-strap.tpl.js" data-semver="v2.3.8"></script>
+    <script src="https://mgcrea.github.io/angular-strap/docs/angular-strap.docs.tpl.js" data-semver="v2.3.8"></script>
+    <script src="app.js"></script>
+
+    <script src="./modal.js" type="text/ng-template" id="modal.html" > 
+     
+      <div class="modal" tabindex="0" role="dialog" aria-hidden="true">
+        <span role="dialog" class="sr-only"></span>
+        <div class="modal-dialog {{size}} modal-full-height">
+          <div class="modal-content">
+    
+            <div class="modal-header" ng-show="title">
+              <button type="button" role="button" class="close" aria-label="Close" ng-click="$hide()"><span aria-hidden="true">&times;</span></button>
+              <h1 class="modal-title" ng-bind="title"></h1>
+            </div>
+    
+           
+              <form name="modal-form" >
+                <div class="modal-body" ng-model="helpSelectedDestination" lat="latitude" lon="longitude" app-directive>  
+                <input type="text" class="form-control" ng-model="helpSelectedDestination.countryCode" bs-options="country for country in getCountryList()" placeholder="Country" bs-typeahead>
+                <input type="number" class="form-control" min="-90" max="90" name="latitude" ng-model="helpSelectedDestination.latitude" required />
+                <input type="number" class="form-control" min="-90" max="90" name="longitude" ng-model="helpSelectedDestination.longitude" required />
+                <button class="button1 btn btn-success col-sm-6" data-ng-disabled="!modal-form.latitude.$valid || !modal-form.longitude.$valid" ng-click="updateDestination(helpSelectedDestination.id)"  type="submit">+ Update destination</button>    
+              </div>      
+              </form>               
+            
+           
+    
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" ng-click="$hide()" aria-label="Close">Close</button>
+            </div>
+    
+          </div>
+        </div>
+      </div>
+    </script>
+
+  </body>
+
+</html>
